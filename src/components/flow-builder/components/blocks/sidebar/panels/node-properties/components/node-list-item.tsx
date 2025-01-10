@@ -4,15 +4,17 @@ import { cn, truncateMiddle } from "@/lib/utils";
 
 import { isEmpty } from "radash";
 
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, MouseEvent } from "react";
 
 type NodeListItemProps = Readonly<
-  ComponentPropsWithoutRef<"button"> & {
+  Omit<ComponentPropsWithoutRef<"button">, "onClick"> & {
     icon: string;
     title: string;
     id?: string;
     selected?: boolean;
     pseudoSelected?: boolean;
+    "data-node-id"?: string;
+    onClick: (event: MouseEvent<HTMLButtonElement>) => void;
   }
 >;
 
@@ -23,6 +25,8 @@ export function NodeListItem({
   icon,
   selected,
   pseudoSelected,
+  "data-node-id": dataNodeId,
+  onClick,
   ...props
 }: NodeListItemProps) {
   return (
@@ -31,9 +35,11 @@ export function NodeListItem({
       variant={selected ? "default" : "ghost"}
       className={cn(
         "h-8 select-none flex items-center justify-between gap-4 ",
-
+        pseudoSelected && "bg-primary/10",
         className
       )}
+      data-node-id={dataNodeId}
+      onClick={onClick}
       {...props}
     >
       <HeaderWithIcon icon={icon} title={title} />

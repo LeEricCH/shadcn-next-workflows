@@ -9,31 +9,38 @@ import { useShallow } from "zustand/shallow";
 import {
   NodeCard,
   NodeCardContent,
+  NodeCardDescription,
+  NodeCardFooter,
   NodeCardHeader,
 } from "@flow-builder-ui/node-card";
-import TextMessageNodePropertyPanel from "../../sidebar/panels/node-properties/property-panels/text-message-property-panel";
+import DelayNodePropertyPanel from "../../sidebar/panels/node-properties/property-panels/delay-property-panel";
 import { cn } from "@/lib/utils";
 
-const NODE_TYPE = BuilderNode.TEXT_MESSAGE;
+const NODE_TYPE = BuilderNode.DELAY;
 
-// Fixed handle IDs for text message node
+// Fixed handle IDs for delay node
 const HANDLE_IDS = {
   target: 'target',
   source: 'source'
 } as const;
 
-export interface TextMessageNodeData extends BaseNodeData {
-  message: string;
+export type TimeUnit = "seconds" | "minutes" | "hours" | "days";
+
+export interface DelayNodeData extends BaseNodeData {
+  duration: number;
+  unit: TimeUnit;
 }
 
-type TextMessageNodeProps = NodeProps<Node<TextMessageNodeData, typeof NODE_TYPE>>;
+const TimeUnitLabels: Record<TimeUnit, string> = {
+  seconds: "seconds",
+  minutes: "minutes",
+  hours: "hours",
+  days: "days",
+};
 
-function TextMessageNode({
-  id,
-  data,
-  selected,
-  isConnectable = true,
-}: TextMessageNodeProps) {
+type DelayNodeProps = NodeProps<Node<DelayNodeData, typeof NODE_TYPE>>;
+
+export function DelayNode({ id, isConnectable, selected, data }: DelayNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), []);
   const [showNodePropertiesOf] = useFlowStore(
     useShallow((s) => [s.actions.sidebar.showNodePropertiesOf])
@@ -61,16 +68,22 @@ function TextMessageNode({
 
       <NodeCardContent>
         <div className="flex flex-col p-4">
-          <div className="text-xs font-medium text-card-foreground">Message</div>
-          <div
-            className={cn(
-              "line-clamp-4 mt-2 text-sm leading-snug",
-              !data.message && "italic text-card-foreground/60"
-            )}
-          >
-            {data.message || "No message set..."}
+          <div className="text-xs font-medium text-card-foreground">
+            Delay Duration
+          </div>
+
+          <div className="line-clamp-4 mt-2 text-sm leading-snug">
+            <span className={cn(
+              "text-card-foreground",
+              !data.duration && "italic text-card-foreground/60"
+            )}>
+              {data.duration ? `${data.duration} ${TimeUnitLabels[data.unit]}` : "No duration set..."}
+            </span>
           </div>
         </div>
+
+        <NodeCardDescription description="Pause the flow for a specified duration" />
+        <NodeCardFooter nodeId={id} />
       </NodeCardContent>
 
       <CustomHandle
@@ -90,21 +103,22 @@ function TextMessageNode({
   );
 }
 
-export const metadata: RegisterNodeMetadata<TextMessageNodeData> = {
+export const metadata: RegisterNodeMetadata<DelayNodeData> = {
   type: NODE_TYPE,
-  node: memo(TextMessageNode),
+  node: memo(DelayNode),
   detail: {
-    icon: "ph:chat-circle-text-fill",
-    title: "Text Message",
-    description: "Send a text message to the user",
-    gradientColor: "green",
+    icon: "ph:timer-bold",
+    title: "Delay",
+    description: "Add a delay between actions",
+    gradientColor: "orange",
   },
   connection: {
     inputs: 1,
     outputs: 1,
   },
   defaultData: {
-    message: "",
+    duration: 0,
+    unit: "seconds",
   },
-  propertyPanel: TextMessageNodePropertyPanel,
-};
+  propertyPanel: DelayNodePropertyPanel,
+}; 

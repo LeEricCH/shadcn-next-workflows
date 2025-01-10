@@ -5,6 +5,9 @@ import { HeaderWithIcon } from "./header-with-icon";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button } from "@/components/ui/button";
 import { HeaderGradientColors } from "../blocks/types";
+import { useFlowStore } from "@/stores/flow-store";
+import { useShallow } from "zustand/shallow";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const NodeCard = React.forwardRef<
   HTMLDivElement,
@@ -131,15 +134,47 @@ interface NodeCardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const NodeCardFooter = React.forwardRef<HTMLDivElement, NodeCardFooterProps>(
-  ({ className, nodeId, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={`bg-card-foreground/10 overflow-clip rounded-b-md px-4 py-2 text-[10px] text-card-foreground/50 ${className}`}
-      {...props}
-    >
-      Node: <span className="font-semibold">#{nodeId}</span>
-    </div>
-  )
+  ({ className, nodeId, ...props }, ref) => {
+    const errors = useFlowStore((s) => 
+      s.workflow.validation.errors.filter((e) => e.nodeId === nodeId.toString())
+    );
+
+    const hasErrors = errors.length > 0;
+    const errorCount = errors.length;
+    const errorMessages = errors.map((e) => e.message).join('\n');
+
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "bg-card-foreground/10 overflow-clip rounded-b-md px-4 py-2 text-[10px] text-card-foreground/50 flex items-center justify-between",
+          hasErrors && "bg-red-500/10",
+          className
+        )}
+        {...props}
+      >
+        <div>
+          Node: <span className="font-semibold">#{nodeId}</span>
+        </div>
+        
+        {hasErrors && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-1 text-red-500">
+                <Icon icon="ph:warning-circle-fill" className="size-3.5" />
+                <span className="text-[10px]">{errorCount}</span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <div className="text-xs whitespace-pre-line">
+                {errorMessages}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </div>
+    );
+  }
 );
 NodeCardFooter.displayName = "NodeCardFooter";
 

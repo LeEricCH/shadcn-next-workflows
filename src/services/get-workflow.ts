@@ -1,254 +1,289 @@
-import type { IFlowState } from "@/stores/flow-store";
-
-export const getWorkflow = async (
-  id: string
-): Promise<IFlowState["workflow"]> => {
-  // TODO: Get data from API
+export const getWorkflow = async (id: string) => {
   return {
-    id: "1",
-    name: "Initial Workflow",
-    edges: [
+    "id": "1",
+    "name": "Initial Workflow",
+    "edges": [
       {
-        id: "27Uqm_guQgYOw81_ibdSu",
-        source: "rFM8ixvItA-i-bXblxZ_M",
-        target: "nESW80juDe8b5bB_tbmSc",
-        type: "deletable",
+        "source": "start-node",
+        "sourceHandle": "source",
+        "target": "ICw6B5V_4BZlAGwfl3ajo",
+        "targetHandle": "target",
+        "id": "DJdzsxUgC0KHbu7DMlcf2",
+        "type": "deletable"
       },
       {
-        id: "aiMB_q-I713SLcttfM6PS",
-        source: "nESW80juDe8b5bB_tbmSc",
-        target: "5zne5FShP-jUCF1s7823h",
-        type: "deletable",
+        "id": "AobP6-3JeSe6pOefMgqZg",
+        "type": "deletable",
+        "target": "zlCd-kL9h6-_aYsLt67Yx",
+        "sourceHandle": "eddYx2qqTRSjnK4tTYi3k",
+        "source": "ICw6B5V_4BZlAGwfl3ajo"
       },
       {
-        id: "gqnkF2AYRxqf8QUiZHuyr",
-        source: "5zne5FShP-jUCF1s7823h",
-        target: "8p15_Y66luCEbFS_J7vcO",
-        type: "deletable",
+        "id": "XsCG0Z7uRN8h5JWJ3PHyk",
+        "type": "deletable",
+        "target": "QHANtCx_XsBnBeMxCGgFp",
+        "sourceHandle": "body",
+        "source": "zlCd-kL9h6-_aYsLt67Yx"
       },
       {
-        id: "AKIsmctF2xPTVcEGZgwBn",
-        source: "8p15_Y66luCEbFS_J7vcO",
-        target: "DtJ7scXmGEA101ommJOKc",
-        type: "deletable",
+        "source": "zlCd-kL9h6-_aYsLt67Yx",
+        "sourceHandle": "exit",
+        "target": "end-node",
+        "targetHandle": "target",
+        "id": "jMaaBoMnDAXBNn0raw3O5",
+        "type": "deletable"
       },
       {
-        id: "wEgmkVqjI5s2VH32FIMvX",
-        source: "nESW80juDe8b5bB_tbmSc",
-        target: "9BP0qBxoQ70DKRq8gC1GX",
-        type: "deletable",
+        "id": "yf3XbepOwYurO19NDpAmE",
+        "type": "deletable",
+        "target": "SgJfbiM3QV_PeDZINTKWY",
+        "sourceHandle": "9aSIpY8kjCIFJtIPvgFCN",
+        "source": "ICw6B5V_4BZlAGwfl3ajo"
       },
       {
-        id: "VY2MoIexgvwqn-h8NU2Rp",
-        source: "9BP0qBxoQ70DKRq8gC1GX",
-        target: "F1zbrjG2vqeDEFElu1478",
-        type: "deletable",
+        "id": "ucKrgCpQfoVwxBodb9iWa",
+        "type": "deletable",
+        "target": "UnaEEkTyNpH8rknXJEIaw",
+        "sourceHandle": "HTG9Nhm9OPHo9rkhmTlOM",
+        "source": "ICw6B5V_4BZlAGwfl3ajo"
       },
       {
-        id: "nCaxSFN8ZGR_o23Y6M7PA",
-        source: "F1zbrjG2vqeDEFElu1478",
-        target: "DtJ7scXmGEA101ommJOKc",
-        type: "deletable",
+        "id": "QETq_adSiDZRXMALG9GnY",
+        "type": "deletable",
+        "target": "liV7jHZC83ocWkJNbTRv4",
+        "sourceHandle": "source",
+        "source": "UnaEEkTyNpH8rknXJEIaw"
       },
       {
-        id: "K9n9h4MV4dpHMbrTstf48",
-        source: "nESW80juDe8b5bB_tbmSc",
-        target: "Z-jW1DqKIqpw1SDVMnkra",
-        type: "deletable",
+        "source": "liV7jHZC83ocWkJNbTRv4",
+        "sourceHandle": "true",
+        "target": "end-node",
+        "targetHandle": "target",
+        "id": "q-kPWS5agtKo2gbeK5Tb0",
+        "type": "deletable"
       },
       {
-        id: "bnm75BAIbdRkozdO7sE3I",
-        source: "Z-jW1DqKIqpw1SDVMnkra",
-        target: "ORKuDH3QHalm-h0zs8zd_",
-        type: "deletable",
-      },
-      {
-        id: "SJVanPsTtjJSaTJ4_mJQK",
-        source: "ORKuDH3QHalm-h0zs8zd_",
-        target: "DtJ7scXmGEA101ommJOKc",
-        type: "deletable",
-      },
+        "source": "SgJfbiM3QV_PeDZINTKWY",
+        "sourceHandle": "source",
+        "target": "end-node",
+        "targetHandle": "target",
+        "id": "ixivY5q6dqeS1ukUhrB9O",
+        "type": "deletable"
+      }
     ],
-    nodes: [
+    "nodes": [
       {
-        id: "rFM8ixvItA-i-bXblxZ_M",
-        type: "start",
-        position: {
-          x: 0,
-          y: 267,
+        "id": "start-node",
+        "type": "start",
+        "position": {
+          "x": 0,
+          "y": 0
         },
-        deletable: false,
-        data: {
-          label: "Start",
-          deletable: false,
+        "data": {
+          "label": "Start",
+          "deletable": false
         },
-
-        measured: {
-          width: 96,
-          height: 42,
+        "measured": {
+          "width": 96,
+          "height": 42
         },
+        "selected": false
       },
       {
-        id: "DtJ7scXmGEA101ommJOKc",
-        type: "end",
-        position: {
-          x: 1440,
-          y: 272,
+        "id": "end-node",
+        "type": "end",
+        "position": {
+          "x": 1632,
+          "y": 128
         },
-        deletable: false,
-        data: {
-          label: "End",
-          deletable: true,
+        "data": {
+          "label": "End",
+          "deletable": true
         },
-        measured: {
-          width: 90,
-          height: 42,
+        "measured": {
+          "width": 91,
+          "height": 42
         },
+        "selected": false,
+        "dragging": false
       },
       {
-        id: "5zne5FShP-jUCF1s7823h",
-        type: "tags",
-        position: {
-          x: 592,
-          y: -42,
+        "id": "ICw6B5V_4BZlAGwfl3ajo",
+        "type": "menu",
+        "position": {
+          "x": 224,
+          "y": -112
         },
-        deletable: false,
-        data: {
-          tags: ["marketing", "lead"],
-        },
-
-        measured: {
-          width: 288,
-          height: 186,
-        },
-      },
-      {
-        id: "nESW80juDe8b5bB_tbmSc",
-        type: "menu",
-        position: {
-          x: 192,
-          y: 96,
-        },
-        deletable: false,
-        data: {
-          options: [
+        "selected": false,
+        "data": {
+          "question": "What is it you desire?",
+          "options": [
             {
-              id: "VDzoZ8Zy7ziN7Lk7-oCyr",
-              option: {
-                id: 0,
-                value: "Marketing",
-              },
+              "id": "HTG9Nhm9OPHo9rkhmTlOM",
+              "option": {
+                "id": 0,
+                "value": "Money"
+              }
             },
             {
-              id: "oSWr4M-TyKs9xBYAFd1_R",
-              option: {
-                id: 1,
-                value: "Lead",
-              },
+              "id": "9aSIpY8kjCIFJtIPvgFCN",
+              "option": {
+                "id": 1,
+                "value": "Fame"
+              }
             },
             {
-              id: "loCnMZeGPetaibXqZGyhp",
-              option: {
-                id: 2,
-                value: "Support",
-              },
-            },
-          ],
-          question: "Please select an option:",
+              "id": "eddYx2qqTRSjnK4tTYi3k",
+              "option": {
+                "id": 2,
+                "value": "Patience"
+              }
+            }
+          ]
         },
-        measured: {
-          width: 288,
-          height: 348,
+        "deletable": true,
+        "draggable": true,
+        "connectable": true,
+        "measured": {
+          "width": 288,
+          "height": 308
         },
+        "dragging": false
       },
       {
-        id: "8p15_Y66luCEbFS_J7vcO",
-        type: "text-message",
-        position: {
-          x: 992,
-          y: 0,
+        "id": "zlCd-kL9h6-_aYsLt67Yx",
+        "type": "loop",
+        "position": {
+          "x": 624,
+          "y": 208
         },
-        deletable: false,
-        data: {
-          message: "You choose Marketing.",
+        "selected": false,
+        "data": {
+          "type": "count",
+          "maxIterations": 5
         },
-        measured: {
-          width: 288,
-          height: 199,
+        "deletable": true,
+        "draggable": true,
+        "connectable": true,
+        "measured": {
+          "width": 288,
+          "height": 355
         },
+        "dragging": false
       },
       {
-        id: "9BP0qBxoQ70DKRq8gC1GX",
-        type: "tags",
-        position: {
-          x: 592,
-          y: 208,
+        "id": "QHANtCx_XsBnBeMxCGgFp",
+        "type": "delay",
+        "position": {
+          "x": 944,
+          "y": 259
         },
-        deletable: false,
-        data: {
-          tags: ["lead"],
+        "selected": false,
+        "data": {
+          "duration": 69,
+          "unit": "days"
         },
-        measured: {
-          width: 288,
-          height: 186,
+        "deletable": true,
+        "draggable": true,
+        "connectable": true,
+        "measured": {
+          "width": 288,
+          "height": 180
         },
+        "dragging": false
       },
       {
-        id: "F1zbrjG2vqeDEFElu1478",
-        type: "text-message",
-        position: {
-          x: 1024,
-          y: 304,
+        "id": "SgJfbiM3QV_PeDZINTKWY",
+        "type": "text-message",
+        "position": {
+          "x": 624,
+          "y": 32
         },
-        deletable: false,
-        data: {
-          message: "You choose Lead.",
+        "selected": false,
+        "data": {
+          "message": "You are soooo cool!"
         },
-        measured: {
-          width: 288,
-          height: 179,
+        "deletable": true,
+        "draggable": true,
+        "connectable": true,
+        "measured": {
+          "width": 288,
+          "height": 115
         },
+        "dragging": false
       },
       {
-        id: "Z-jW1DqKIqpw1SDVMnkra",
-        type: "tags",
-        position: {
-          x: 592,
-          y: 432,
+        "id": "UnaEEkTyNpH8rknXJEIaw",
+        "type": "tags",
+        "position": {
+          "x": 624,
+          "y": -224
         },
-        deletable: false,
-        data: {
-          tags: ["support"],
+        "selected": false,
+        "data": {
+          "tags": [
+            "lead"
+          ]
         },
-        measured: {
-          width: 288,
-          height: 186,
+        "deletable": true,
+        "draggable": true,
+        "connectable": true,
+        "measured": {
+          "width": 288,
+          "height": 200
         },
+        "dragging": false
       },
       {
-        id: "ORKuDH3QHalm-h0zs8zd_",
-        type: "text-message",
-        position: {
-          x: 1040,
-          y: 528,
+        "id": "liV7jHZC83ocWkJNbTRv4",
+        "type": "branch",
+        "position": {
+          "x": 1024,
+          "y": -272
         },
-        deletable: false,
-        data: {
-          message: "You choose Support.",
+        "selected": false,
+        "data": {
+          "variable": "Tags",
+          "valueType": "string",
+          "comparisonType": "equals",
+          "compareValue": "Lead",
+          "trueLabel": "True",
+          "falseLabel": "False"
         },
-        measured: {
-          width: 288,
-          height: 179,
+        "deletable": true,
+        "draggable": true,
+        "connectable": true,
+        "measured": {
+          "width": 288,
+          "height": 355
         },
-      },
+        "dragging": false
+      }
     ],
-    sidebar: {
-      active: "available-nodes",
-      panels: {
-        nodeProperties: {
-          selectedNode: null,
-        },
-      },
+    "nodePosition": null,
+    "validation": {
+      "errors": [],
+      "isValid": true,
+      "lastValidated": 1736542471914
     },
-  };
+    "sidebar": {
+      "active": "none",
+      "panels": {
+        "nodeProperties": {
+          "selectedNode": {
+            "id": "liV7jHZC83ocWkJNbTRv4",
+            "type": "branch",
+            "data": {
+              "variable": "",
+              "valueType": "string",
+              "comparisonType": "equals",
+              "compareValue": "",
+              "trueLabel": "True",
+              "falseLabel": "False"
+            }
+          }
+        }
+      }
+    }
+  }
 };

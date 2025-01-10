@@ -1,17 +1,15 @@
 import { type Node, type NodeProps, Position } from "@xyflow/react";
-import { nanoid } from "nanoid";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { BaseNodeData, BuilderNode, RegisterNodeMetadata } from "../../types";
 import { getNodeDetail } from "../../utils";
 import { useDeleteNode } from "@/hooks/use-delete-node";
 import CustomHandle from "../../../handles/custom-handler";
 import { NodeOption } from "./components/node-option";
+import { cn } from "@/lib/utils";
 
 import {
   NodeCard,
   NodeCardContent,
-  NodeCardDescription,
-  NodeCardFooter,
   NodeCardHeader,
 } from "@flow-builder-ui/node-card";
 import { useFlowStore } from "@/stores/flow-store";
@@ -21,6 +19,11 @@ import MenuNodePropertyPanel from "../../sidebar/panels/node-properties/property
 
 const NODE_TYPE = BuilderNode.MENU;
 
+// Fixed handle ID for menu node target
+const HANDLE_IDS = {
+  target: 'target'
+} as const;
+
 export interface MenuNodeData extends BaseNodeData {
   question: string | null;
   options: { id: string; option: { id: number; value: string } }[];
@@ -28,13 +31,16 @@ export interface MenuNodeData extends BaseNodeData {
 
 type MenuNodeProps = NodeProps<Node<MenuNodeData, typeof NODE_TYPE>>;
 
-export function MenuNode({ id, isConnectable, selected, data }: MenuNodeProps) {
+function MenuNode({
+  id,
+  data,
+  selected,
+  isConnectable = true,
+}: MenuNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), []);
-
   const [showNodePropertiesOf] = useFlowStore(
     useShallow((s) => [s.actions.sidebar.showNodePropertiesOf])
   );
-  const [sourceHandleId] = useState<string>(nanoid());
 
   const deleteNode = useDeleteNode();
 
@@ -57,42 +63,45 @@ export function MenuNode({ id, isConnectable, selected, data }: MenuNodeProps) {
       />
 
       <NodeCardContent>
-        <div className=" min-h-10 flex flex-col">
-          <div className="flex flex-col p-4">
-            <div className="text-xs font-medium text-card-foreground">
-              Question
-            </div>
-
-            <div className="line-clamp-4 mt-2 text-sm leading-snug">
-              <span className="text-card-foreground italic">
-                {isEmpty(data.question) ? "No question..." : data.question}
-              </span>
-            </div>
+        <div className="flex flex-col p-4">
+          <div className="text-xs font-medium text-card-foreground">Question</div>
+          <div
+            className={cn(
+              "line-clamp-4 mt-2 text-sm leading-snug",
+              !data.question && "italic text-card-foreground/60"
+            )}
+          >
+            {data.question || "No question set..."}
           </div>
         </div>
 
-        <div className="flex flex-col p-4 z-50">
-          <div className="text-xs text-light-900/50 font-medium">Options</div>
+        <div className="flex flex-col p-4">
+          <div className="text-xs font-medium text-card-foreground mb-2">
+            Options
+          </div>
 
-          {data.options.length > 0 &&
-            Array.from(data.options)
-              .sort((a, b) => a.option.id - b.option.id)
-              .map((option) => (
-                <NodeOption
-                  key={option.id}
-                  id={option.id}
-                  option={option.option}
-                  isConnectable={isConnectable}
-                />
-              ))}
+          <div className="flex flex-col gap-2">
+            {data.options.map((optionData) => (
+              <NodeOption
+                key={optionData.id}
+                id={optionData.id}
+                option={optionData.option}
+                isConnectable={isConnectable}
+              />
+            ))}
+
+            {isEmpty(data.options) && (
+              <div className="text-sm text-card-foreground/60 italic">
+                No options set...
+              </div>
+            )}
+          </div>
         </div>
-
-        <NodeCardDescription description="Options to choose from." />
-        <NodeCardFooter nodeId={id} />
       </NodeCardContent>
+
       <CustomHandle
         type="target"
-        id={sourceHandleId}
+        id={HANDLE_IDS.target}
         position={Position.Left}
         isConnectable={isConnectable}
       />
@@ -104,41 +113,18 @@ export const metadata: RegisterNodeMetadata<MenuNodeData> = {
   type: NODE_TYPE,
   node: memo(MenuNode),
   detail: {
-    icon: "f7:menu",
+    icon: "ph:list-numbers-bold",
     title: "Menu",
-    description:
-      "Send options to the user choosing one of them based on the condition.",
-    gradientColor: "fuchsia",
+    description: "Present a menu of options to the user",
+    gradientColor: "blue",
   },
   connection: {
     inputs: 1,
-    outputs: 0,
+    outputs: 1,
   },
   defaultData: {
     question: null,
-    options: [
-      {
-        id: nanoid(),
-        option: {
-          id: 0,
-          value: "Option 1",
-        },
-      },
-      {
-        id: nanoid(),
-        option: {
-          id: 1,
-          value: "Option 2",
-        },
-      },
-      {
-        id: nanoid(),
-        option: {
-          id: 2,
-          value: "Option 3",
-        },
-      },
-    ],
+    options: [],
   },
   propertyPanel: MenuNodePropertyPanel,
 };

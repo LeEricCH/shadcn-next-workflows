@@ -1,7 +1,8 @@
 import { PANEL_COMPONENTS } from "../constants/panels";
+import { SidebarPanel } from "../constants/panels";
 
 type SwitchSidebarPanelProps = Readonly<{
-  active: "node-properties" | "available-nodes" | "none";
+  active: SidebarPanel | "none";
 }>;
 
 export function SwitchSidebarPanel({ active }: SwitchSidebarPanelProps) {

@@ -8,8 +8,8 @@ interface HeaderWithIconProps {
 export const HeaderWithIcon = ({ icon, title }: HeaderWithIconProps) => {
   return (
     <div className="flex items-center">
-      <Icon icon={icon} className={`size-4`} />
-      <div className="ml-2.5 flex items-center text-xs font-medium leading-none tracking-wide uppercase opacity-80">
+      <Icon icon={icon} className="h-6 w-6" />
+      <div className="ml-3 flex items-center text-sm font-medium leading-none tracking-wide uppercase opacity-90">
         <span className="translate-y-px">{title}</span>
       </div>
     </div>

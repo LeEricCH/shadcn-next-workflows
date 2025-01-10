@@ -1,6 +1,5 @@
 import { type Node, type NodeProps, Position } from "@xyflow/react";
-import { nanoid } from "nanoid";
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo } from "react";
 import { BaseNodeData, BuilderNode, RegisterNodeMetadata } from "../types";
 import { getNodeDetail } from "../utils";
 import CustomHandle from "../../handles/custom-handler";
@@ -12,12 +11,15 @@ export interface EndNodeData extends BaseNodeData {
 
 const NODE_TYPE = BuilderNode.END;
 
+// Fixed handle ID for end node
+const HANDLE_IDS = {
+  target: 'target'
+} as const;
+
 type EndNodeProps = NodeProps<Node<EndNodeData, typeof NODE_TYPE>>;
 
 export function EndNode({ data, selected, isConnectable }: EndNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), []);
-
-  const [sourceHandleId] = useState<string>(nanoid());
 
   return (
     <div
@@ -30,7 +32,7 @@ export function EndNode({ data, selected, isConnectable }: EndNodeProps) {
       <span className="mr-1">{data.label || meta.title}</span>
       <CustomHandle
         type="target"
-        id={sourceHandleId}
+        id={HANDLE_IDS.target}
         position={Position.Left}
         isConnectable={isConnectable}
       />
