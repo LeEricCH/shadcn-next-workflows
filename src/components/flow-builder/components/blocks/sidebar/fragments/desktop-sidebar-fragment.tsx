@@ -4,12 +4,11 @@ import SidebarButtonItem from "../components/sidebar-button-item";
 import { Icon } from "@iconify/react";
 import { useFlowStore } from "@/stores/flow-store";
 import { useShallow } from "zustand/shallow";
+import { SidebarPanel } from "../constants/panels";
 
 type DesktopSidebarFragmentProps = Readonly<{
-  activePanel: "node-properties" | "available-nodes" | "validation" | "none";
-  setActivePanel: (
-    panel: "node-properties" | "available-nodes" | "validation" | "none"
-  ) => void;
+  activePanel: SidebarPanel | "none";
+  setActivePanel: (panel: SidebarPanel | "none") => void;
 }>;
 
 export function DesktopSidebarFragment({
@@ -25,7 +24,7 @@ export function DesktopSidebarFragment({
 
   useEffect(() => {
     if (activePanel === "none") {
-      setActivePanel("available-nodes");
+      setActivePanel(SidebarPanel.AVAILABLE_NODES);
     }
   }, [activePanel, setActivePanel]);
 
@@ -40,8 +39,8 @@ export function DesktopSidebarFragment({
       <div className="shrink-0 bg-card p-1.5">
         <div className="h-full flex flex-col gap-2">
           <SidebarButtonItem
-            active={activePanel === "available-nodes"}
-            onClick={() => setActivePanel("available-nodes")}
+            active={activePanel === SidebarPanel.AVAILABLE_NODES}
+            onClick={() => setActivePanel(SidebarPanel.AVAILABLE_NODES)}
           >
             <Icon icon="mynaui:grid" className="size-5" />
           </SidebarButtonItem>
@@ -49,15 +48,15 @@ export function DesktopSidebarFragment({
           <div className="mx-auto h-px w-4 bg-card-foreground/10" />
 
           <SidebarButtonItem
-            active={activePanel === "node-properties"}
-            onClick={() => setActivePanel("node-properties")}
+            active={activePanel === SidebarPanel.NODE_PROPERTIES}
+            onClick={() => setActivePanel(SidebarPanel.NODE_PROPERTIES)}
           >
             <Icon icon="mynaui:layers-three" className="size-5" />
           </SidebarButtonItem>
 
           <SidebarButtonItem
-            active={activePanel === "validation"}
-            onClick={() => setActivePanel("validation")}
+            active={activePanel === SidebarPanel.VALIDATION}
+            onClick={() => setActivePanel(SidebarPanel.VALIDATION)}
           >
             {hasErrors ? (
               <Icon icon="ph:warning-circle-fill" className="size-5 text-red-500" />

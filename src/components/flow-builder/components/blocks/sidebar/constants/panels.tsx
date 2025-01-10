@@ -9,12 +9,9 @@ export enum SidebarPanel {
   VALIDATION = "validation"
 }
 
-export const PANEL_COMPONENTS: Record<
-  "node-properties" | "available-nodes" | "validation" | "none",
-  ComponentType
-> = {
-  "available-nodes": AvailableNodesPanel,
-  "node-properties": NodePropertiesPanel,
-  "validation": ValidationPanel,
+export const PANEL_COMPONENTS: Record<SidebarPanel | "none", ComponentType> = {
+  [SidebarPanel.AVAILABLE_NODES]: AvailableNodesPanel,
+  [SidebarPanel.NODE_PROPERTIES]: NodePropertiesPanel,
+  [SidebarPanel.VALIDATION]: ValidationPanel,
   none: () => null,
 };

@@ -1,6 +1,5 @@
 import { type Node, type NodeProps, Position } from "@xyflow/react";
-import { nanoid } from "nanoid";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { BaseNodeData, BuilderNode, RegisterNodeMetadata } from "../../types";
 import { getNodeDetail } from "../../utils";
 import { useFlowStore } from "@/stores/flow-store";
@@ -18,6 +17,13 @@ import BranchNodePropertyPanel from "../../sidebar/panels/node-properties/proper
 import { cn } from "@/lib/utils";
 
 const NODE_TYPE = BuilderNode.BRANCH;
+
+// Fixed handle IDs for branch node
+const HANDLE_IDS = {
+  target: 'target',
+  true: 'true',
+  false: 'false'
+} as const;
 
 export type ComparisonType = 
   | "equals" 
@@ -64,10 +70,6 @@ export function BranchNode({ id, isConnectable, selected, data }: BranchNodeProp
   const [showNodePropertiesOf] = useFlowStore(
     useShallow((s) => [s.actions.sidebar.showNodePropertiesOf])
   );
-
-  const [targetHandleId] = useState<string>(nanoid());
-  const [trueHandleId] = useState<string>(nanoid());
-  const [falseHandleId] = useState<string>(nanoid());
 
   const deleteNode = useDeleteNode();
 
@@ -134,7 +136,7 @@ export function BranchNode({ id, isConnectable, selected, data }: BranchNodeProp
 
             <CustomHandle
               type="source"
-              id="true"
+              id={HANDLE_IDS.true}
               position={Position.Right}
               isConnectable={isConnectable}
               className="!bg-green-500"
@@ -152,7 +154,7 @@ export function BranchNode({ id, isConnectable, selected, data }: BranchNodeProp
 
             <CustomHandle
               type="source"
-              id="false"
+              id={HANDLE_IDS.false}
               position={Position.Right}
               isConnectable={isConnectable}
               className="!bg-red-500"
@@ -166,7 +168,7 @@ export function BranchNode({ id, isConnectable, selected, data }: BranchNodeProp
 
       <CustomHandle
         type="target"
-        id={targetHandleId}
+        id={HANDLE_IDS.target}
         position={Position.Left}
         isConnectable={isConnectable}
       />

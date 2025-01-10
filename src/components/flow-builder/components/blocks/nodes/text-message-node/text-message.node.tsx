@@ -1,45 +1,43 @@
 import { type Node, type NodeProps, Position } from "@xyflow/react";
-import { nanoid } from "nanoid";
-import { isEmpty } from "radash";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { BaseNodeData, BuilderNode, RegisterNodeMetadata } from "../../types";
-
 import { getNodeDetail } from "../../utils";
 import { useFlowStore } from "@/stores/flow-store";
 import { useDeleteNode } from "@/hooks/use-delete-node";
 import CustomHandle from "@/components/flow-builder/components/handles/custom-handler";
-import TextMessageNodePropertyPanel from "../../sidebar/panels/node-properties/property-panels/text-message-property-panel";
 import { useShallow } from "zustand/shallow";
 import {
   NodeCard,
   NodeCardContent,
-  NodeCardDescription,
-  NodeCardFooter,
   NodeCardHeader,
 } from "@flow-builder-ui/node-card";
+import TextMessageNodePropertyPanel from "../../sidebar/panels/node-properties/property-panels/text-message-property-panel";
+import { cn } from "@/lib/utils";
 
 const NODE_TYPE = BuilderNode.TEXT_MESSAGE;
+
+// Fixed handle IDs for text message node
+const HANDLE_IDS = {
+  target: 'target',
+  source: 'source'
+} as const;
 
 export interface TextMessageNodeData extends BaseNodeData {
   message: string;
 }
 
-type TextMessageNodeProps = NodeProps<
-  Node<TextMessageNodeData, typeof NODE_TYPE>
->;
+type TextMessageNodeProps = NodeProps<Node<TextMessageNodeData, typeof NODE_TYPE>>;
 
-export function TextMessageNode({
+function TextMessageNode({
   id,
-  isConnectable,
-  selected,
   data,
+  selected,
+  isConnectable = true,
 }: TextMessageNodeProps) {
   const meta = useMemo(() => getNodeDetail(NODE_TYPE), []);
-
   const [showNodePropertiesOf] = useFlowStore(
     useShallow((s) => [s.actions.sidebar.showNodePropertiesOf])
   );
-  const [sourceHandleId] = useState<string>(nanoid());
 
   const deleteNode = useDeleteNode();
 
@@ -63,35 +61,28 @@ export function TextMessageNode({
 
       <NodeCardContent>
         <div className="flex flex-col p-4">
-          <div className="text-xs font-medium text-card-foreground">
-            Message Content
-          </div>
-
-          <div className="line-clamp-4 mt-2 text-sm leading-snug">
-            {isEmpty(data.message) ? (
-              <span className="text-card-foreground italic">
-                No message yet...
-              </span>
-            ) : (
-              data.message
+          <div className="text-xs font-medium text-card-foreground">Message</div>
+          <div
+            className={cn(
+              "line-clamp-4 mt-2 text-sm leading-snug",
+              !data.message && "italic text-card-foreground/60"
             )}
+          >
+            {data.message || "No message set..."}
           </div>
         </div>
-
-        <NodeCardDescription description="This message will be sent to user" />
-
-        <NodeCardFooter nodeId={id} />
       </NodeCardContent>
+
       <CustomHandle
         type="target"
-        id={sourceHandleId}
+        id={HANDLE_IDS.target}
         position={Position.Left}
         isConnectable={isConnectable}
       />
 
       <CustomHandle
         type="source"
-        id={sourceHandleId}
+        id={HANDLE_IDS.source}
         position={Position.Right}
         isConnectable={isConnectable}
       />
@@ -103,10 +94,10 @@ export const metadata: RegisterNodeMetadata<TextMessageNodeData> = {
   type: NODE_TYPE,
   node: memo(TextMessageNode),
   detail: {
-    icon: "mynaui:message-solid",
+    icon: "ph:chat-circle-text-fill",
     title: "Text Message",
-    description:
-      "Send a text message to the user using different messaging platforms like WhatsApp, Messenger, etc.",
+    description: "Send a text message to the user",
+    gradientColor: "green",
   },
   connection: {
     inputs: 1,

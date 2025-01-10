@@ -157,16 +157,36 @@ const validateFlow = (state: IFlowState): ValidationError[] => {
       }
     }
     
-    // Check for nodes without outgoing connections (except end node)
-    if (node.type !== BuilderNode.END) {
-      const hasOutgoing = state.workflow.edges.some((e) => e.source === node.id);
-      if (!hasOutgoing) {
+    // Check for nodes without outgoing connections based on type
+    if (node.type === BuilderNode.LOOP) {
+      // For loop nodes, check exit connection
+      const hasExitConnection = state.workflow.edges.some((e) => e.source === node.id && e.sourceHandle === 'exit');
+      if (!hasExitConnection) {
         errors.push({
           nodeId: node.id,
           type: 'connection',
-          message: 'Node has no outgoing connections',
+          message: 'Loop node must have an exit connection',
           severity: 'error',
         });
+      }
+    } else if (node.type !== BuilderNode.END) {
+      // Check if this node is in a loop body
+      const isInLoopBody = state.workflow.edges.some(e => {
+        const sourceNode = state.workflow.nodes.find(n => n.id === e.source);
+        return sourceNode?.type === BuilderNode.LOOP && e.sourceHandle === 'body' && e.target === node.id;
+      });
+
+      // Only check for outgoing connections if not in a loop body
+      if (!isInLoopBody) {
+        const hasOutgoing = state.workflow.edges.some((e) => e.source === node.id);
+        if (!hasOutgoing) {
+          errors.push({
+            nodeId: node.id,
+            type: 'connection',
+            message: 'Node has no outgoing connections',
+            severity: 'error',
+          });
+        }
       }
     }
   });
@@ -328,6 +348,7 @@ export const useFlowStore = create<IFlowState>()(
             
             const errors: ValidationError[] = [];
             
+            // Check incoming connections for all nodes except START
             if (node.type !== BuilderNode.START) {
               const hasIncoming = state.workflow.edges.some((e) => e.target === node.id);
               if (!hasIncoming) {
@@ -340,7 +361,31 @@ export const useFlowStore = create<IFlowState>()(
               }
             }
             
-            if (node.type !== BuilderNode.END) {
+            // Check outgoing connections based on node type
+            if (node.type === BuilderNode.LOOP) {
+              // For loop nodes, check both body and exit connections
+              const hasBodyConnection = state.workflow.edges.some((e) => e.source === node.id && e.sourceHandle === 'body');
+              const hasExitConnection = state.workflow.edges.some((e) => e.source === node.id && e.sourceHandle === 'exit');
+
+              if (!hasExitConnection) {
+                errors.push({
+                  nodeId: node.id,
+                  type: 'connection',
+                  message: 'Loop node must have an exit connection',
+                  severity: 'error',
+                });
+              }
+
+              if (!hasBodyConnection) {
+                errors.push({
+                  nodeId: node.id,
+                  type: 'connection',
+                  message: 'Loop node must have a body connection',
+                  severity: 'error',
+                });
+              }
+            } else if (node.type !== BuilderNode.END) {
+              // For non-loop, non-end nodes, check for any outgoing connection
               const hasOutgoing = state.workflow.edges.some((e) => e.source === node.id);
               if (!hasOutgoing) {
                 errors.push({

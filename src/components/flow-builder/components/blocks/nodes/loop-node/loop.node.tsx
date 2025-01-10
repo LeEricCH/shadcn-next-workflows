@@ -1,6 +1,5 @@
 import { type Node, type NodeProps, Position } from "@xyflow/react";
-import { nanoid } from "nanoid";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { BaseNodeData, BuilderNode, RegisterNodeMetadata } from "../../types";
 import { getNodeDetail } from "../../utils";
 import { useFlowStore } from "@/stores/flow-store";
@@ -18,6 +17,13 @@ import LoopNodePropertyPanel from "../../sidebar/panels/node-properties/property
 import { cn } from "@/lib/utils";
 
 const NODE_TYPE = BuilderNode.LOOP;
+
+// Fixed handle IDs for loop node
+const HANDLE_IDS = {
+  target: 'target',
+  body: 'body',
+  exit: 'exit'
+} as const;
 
 export type LoopType = "count" | "condition" | "collection";
 
@@ -43,10 +49,6 @@ export function LoopNode({ id, isConnectable, selected, data }: LoopNodeProps) {
     useShallow((s) => [s.actions.sidebar.showNodePropertiesOf])
   );
 
-  const [targetHandleId] = useState<string>(nanoid());
-  const [bodyHandleId] = useState<string>(nanoid());
-  const [exitHandleId] = useState<string>(nanoid());
-
   const deleteNode = useDeleteNode();
 
   const handleDeleteNode = () => {
@@ -62,11 +64,11 @@ export function LoopNode({ id, isConnectable, selected, data }: LoopNodeProps) {
       case "count":
         return `Repeat ${data.maxIterations} times`;
       case "condition":
-        return `While ${data.condition || "condition"}`;
+        return data.condition ? `While ${data.condition}` : "No condition set...";
       case "collection":
-        return `For each item in ${data.collection || "collection"}`;
+        return data.collection ? `For each item in ${data.collection}` : "No collection set...";
       default:
-        return "No loop configuration...";
+        return "No loop type set...";
     }
   };
 
@@ -120,7 +122,7 @@ export function LoopNode({ id, isConnectable, selected, data }: LoopNodeProps) {
 
             <CustomHandle
               type="source"
-              id="body"
+              id={HANDLE_IDS.body}
               position={Position.Right}
               isConnectable={isConnectable}
               className="!bg-blue-500"
@@ -138,7 +140,7 @@ export function LoopNode({ id, isConnectable, selected, data }: LoopNodeProps) {
 
             <CustomHandle
               type="source"
-              id="exit"
+              id={HANDLE_IDS.exit}
               position={Position.Right}
               isConnectable={isConnectable}
               className="!bg-green-500"
@@ -146,13 +148,13 @@ export function LoopNode({ id, isConnectable, selected, data }: LoopNodeProps) {
           </div>
         </div>
 
-        <NodeCardDescription description="Create a loop to repeat actions based on a condition or count" />
+        <NodeCardDescription description="Repeat a section of the flow based on a condition or count" />
         <NodeCardFooter nodeId={id} />
       </NodeCardContent>
 
       <CustomHandle
         type="target"
-        id={targetHandleId}
+        id={HANDLE_IDS.target}
         position={Position.Left}
         isConnectable={isConnectable}
       />
@@ -164,10 +166,10 @@ export const metadata: RegisterNodeMetadata<LoopNodeData> = {
   type: NODE_TYPE,
   node: memo(LoopNode),
   detail: {
-    icon: "ph:repeat-fill",
+    icon: "ph:repeat-bold",
     title: "Loop",
-    description: "Create loops to repeat actions based on conditions or counts",
-    gradientColor: "blue",
+    description: "Repeat a section of the flow",
+    gradientColor: "purple",
   },
   connection: {
     inputs: 1,

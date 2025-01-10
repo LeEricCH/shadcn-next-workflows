@@ -1,6 +1,5 @@
 import { type Node, type NodeProps, Position } from "@xyflow/react";
-import { nanoid } from "nanoid";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { BaseNodeData, BuilderNode, RegisterNodeMetadata } from "../../types";
 import { getNodeDetail } from "../../utils";
 import { useFlowStore } from "@/stores/flow-store";
@@ -18,6 +17,12 @@ import DelayNodePropertyPanel from "../../sidebar/panels/node-properties/propert
 import { cn } from "@/lib/utils";
 
 const NODE_TYPE = BuilderNode.DELAY;
+
+// Fixed handle IDs for delay node
+const HANDLE_IDS = {
+  target: 'target',
+  source: 'source'
+} as const;
 
 export type TimeUnit = "seconds" | "minutes" | "hours" | "days";
 
@@ -41,8 +46,6 @@ export function DelayNode({ id, isConnectable, selected, data }: DelayNodeProps)
     useShallow((s) => [s.actions.sidebar.showNodePropertiesOf])
   );
 
-  const [handleId] = useState<string>(nanoid());
-
   const deleteNode = useDeleteNode();
 
   const handleDeleteNode = () => {
@@ -52,11 +55,6 @@ export function DelayNode({ id, isConnectable, selected, data }: DelayNodeProps)
   const handleShowNodeProperties = useCallback(() => {
     showNodePropertiesOf({ id, type: NODE_TYPE });
   }, [id, showNodePropertiesOf]);
-
-  const getDelayText = () => {
-    if (!data.duration) return "No delay set...";
-    return `Wait for ${data.duration} ${TimeUnitLabels[data.unit]}`;
-  };
 
   return (
     <NodeCard data-selected={selected} onDoubleClick={handleShowNodeProperties}>
@@ -79,25 +77,25 @@ export function DelayNode({ id, isConnectable, selected, data }: DelayNodeProps)
               "text-card-foreground",
               !data.duration && "italic text-card-foreground/60"
             )}>
-              {getDelayText()}
+              {data.duration ? `${data.duration} ${TimeUnitLabels[data.unit]}` : "No duration set..."}
             </span>
           </div>
         </div>
 
-        <NodeCardDescription description="Add a delay before proceeding to the next step" />
+        <NodeCardDescription description="Pause the flow for a specified duration" />
         <NodeCardFooter nodeId={id} />
       </NodeCardContent>
 
       <CustomHandle
         type="target"
-        id={handleId}
+        id={HANDLE_IDS.target}
         position={Position.Left}
         isConnectable={isConnectable}
       />
 
       <CustomHandle
         type="source"
-        id={handleId}
+        id={HANDLE_IDS.source}
         position={Position.Right}
         isConnectable={isConnectable}
       />
@@ -109,10 +107,10 @@ export const metadata: RegisterNodeMetadata<DelayNodeData> = {
   type: NODE_TYPE,
   node: memo(DelayNode),
   detail: {
-    icon: "ph:timer-fill",
+    icon: "ph:timer-bold",
     title: "Delay",
-    description: "Add a delay between steps in the workflow",
-    gradientColor: "yellow",
+    description: "Add a delay between actions",
+    gradientColor: "orange",
   },
   connection: {
     inputs: 1,
