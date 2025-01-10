@@ -2,9 +2,14 @@
 
 This project is a fork and expansion of [nobruf/shadcn-next-workflows](https://github.com/nobruf/shadcn-next-workflows), enhanced with additional features and improvements. It demonstrates how to build and visualize interactive workflows using React Flows, Next.js, and Shadcnui, with expanded functionality for a more robust workflow building experience.
 
-## Screenshots
+## Live Demo
+Check it out deployed on Vercel [here](https://shadcn-extended-workflows.vercel.app/)
 
-![App Screenshot](https://github.com/nobruf/shadcn-next-workflows/blob/main/public/screen.jpeg?raw=true)
+## Screenshots
+<img width="957" alt="image" src="https://github.com/user-attachments/assets/6884b3a0-8cfa-467c-9500-0a3ca9456bad" />
+<img width="231" alt="image" src="https://github.com/user-attachments/assets/bb5552d2-e806-4aea-9b1d-db8346a5ace6" />
+<img width="229" alt="image" src="https://github.com/user-attachments/assets/b6511ea3-6ea5-4a59-a8e6-f5db6759e8b0" />
+
 
 ## ✨ Features
 
