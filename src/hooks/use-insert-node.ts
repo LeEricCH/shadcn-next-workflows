@@ -7,14 +7,13 @@ import { useShallow } from "zustand/shallow";
 import { SidebarPanel } from "@/components/flow-builder/components/blocks/sidebar/constants/panels";
 
 export function useInsertNode() {
-  const { addNodes, screenToFlowPosition, getNodes, updateNode } = useReactFlow();
-  const [nodePosition, setNodePosition, showNodeProperties, setActivePanel, setNodes] = useFlowStore(
+  const { addNodes, screenToFlowPosition } = useReactFlow();
+  const [nodePosition, setNodePosition, showNodeProperties, setActivePanel] = useFlowStore(
     useShallow((s) => [
       s.workflow.nodePosition, 
       s.actions.nodes.setNodePosition,
       s.actions.sidebar.showNodePropertiesOf,
-      s.actions.sidebar.setActivePanel,
-      s.actions.nodes.setNodes
+      s.actions.sidebar.setActivePanel
     ])
   );
 
@@ -34,37 +33,26 @@ export function useInsertNode() {
         });
       }
 
-      // Deselect all nodes
-      getNodes().forEach((node) => {
-        if (node.selected) {
-          updateNode(node.id, { selected: false });
-        }
-      });
-
       // Create the node with default data and position
       const newNode = createNodeWithDefaultData(type, {
         position,
-        selected: true,
+        selected: false,
       });
 
-      // Add the node to the flow using addNodes first
+      // Add the node to the flow
       addNodes(newNode);
-      
-      // Then update the store
-      const currentNodes = getNodes();
-      setNodes(currentNodes);
 
-      // Use setTimeout to ensure the node is added before showing properties
-      setTimeout(() => {
+      // Update the node properties and panel
+      Promise.resolve().then(() => {
         showNodeProperties({ 
           id: newNode.id, 
           type: newNode.type as BuilderNodeType
         });
         setActivePanel(SidebarPanel.NODE_PROPERTIES);
-      }, 0);
+      });
 
       return newNode;
     },
-    [screenToFlowPosition, getNodes, updateNode, nodePosition, setNodePosition, showNodeProperties, setActivePanel, setNodes, addNodes]
+    [screenToFlowPosition, nodePosition, setNodePosition, showNodeProperties, setActivePanel, addNodes]
   );
 }

@@ -10,7 +10,6 @@ import {
   NodeCard,
   NodeCardContent,
   NodeCardDescription,
-  NodeCardFooter,
   NodeCardHeader,
 } from "@flow-builder-ui/node-card";
 import { Badge } from "@/components/ui/badge";
@@ -87,7 +86,6 @@ export function TagsNode({ id, isConnectable, selected, data }: TagsNodeProps) {
         </div>
 
         <NodeCardDescription description="Add tags to organize and categorize your workflow" />
-        <NodeCardFooter nodeId={id} />
       </NodeCardContent>
 
       <CustomHandle

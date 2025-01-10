@@ -53,6 +53,7 @@ export const FlowBuilder = () => {
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const viewport = useViewport();
   const insertNode = useInsertNode();
+  const { getNodes, setNodes, setEdges } = useReactFlow();
   
   const [
     name,
@@ -75,7 +76,6 @@ export const FlowBuilder = () => {
       s.actions.edges.deleteEdge,
     ])
   );
-  const { getNodes, setNodes, setEdges } = useReactFlow();
 
   const {
     handleOnEdgeDropConnectEnd,
@@ -175,14 +175,15 @@ export const FlowBuilder = () => {
   const [copiedFlowNode, setCopiedFlowNode] = useState<Node | null>(null);
 
   const handleCopyNode = useCallback(() => {
-    if (selectedFlowNode) {
-      setCopiedFlowNode(selectedFlowNode);
+    const selectedNode = nodes.find(n => n.selected);
+    if (selectedNode) {
+      setCopiedFlowNode(selectedNode);
       toast.success("Node copied", {
         description: "Press Ctrl+V to paste the node",
         dismissible: true,
       });
     }
-  }, [selectedFlowNode]);
+  }, [nodes]);
 
   const handlePasteNode = useCallback(() => {
     if (copiedFlowNode) {
@@ -198,29 +199,35 @@ export const FlowBuilder = () => {
   }, [copiedFlowNode, insertNode, viewport.x, viewport.y, viewport.zoom]);
 
   const handleDuplicateNode = useCallback(() => {
-    if (selectedFlowNode) {
+    const selectedNode = nodes.find(n => n.selected);
+    if (selectedNode) {
       const newPosition = {
-        x: selectedFlowNode.position.x + 100,
-        y: selectedFlowNode.position.y + 100,
+        x: selectedNode.position.x + 100,
+        y: selectedNode.position.y + 100,
       };
-      insertNode(selectedFlowNode.type as BuilderNodeType, newPosition);
+      insertNode(selectedNode.type as BuilderNodeType, newPosition);
       toast.success("Node duplicated");
     }
-  }, [selectedFlowNode, insertNode]);
+  }, [nodes, insertNode]);
 
   const { handleKeyDown } = useKeyboardShortcuts({
-    selectedNode: selectedFlowNode,
+    selectedNode: nodes.find(n => n.selected) || null,
     copiedNode: copiedFlowNode,
     onSelectAll: () => {
       if (getNodes().length > 2) {
-        setNodes((nodes) =>
-          nodes.map((node) => ({
-            ...node,
+        onNodesChange(
+          nodes.map(node => ({
+            type: 'select',
+            id: node.id,
             selected: node.type !== BuilderNode.START && node.type !== BuilderNode.END
           }))
         );
-        setEdges((edges) =>
-          edges.map((edge) => ({ ...edge, selected: true }))
+        onEdgesChange(
+          edges.map(edge => ({
+            type: 'select',
+            id: edge.id,
+            selected: true
+          }))
         );
       }
     },

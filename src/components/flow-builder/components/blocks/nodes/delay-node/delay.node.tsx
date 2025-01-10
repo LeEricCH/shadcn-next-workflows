@@ -10,7 +10,6 @@ import {
   NodeCard,
   NodeCardContent,
   NodeCardDescription,
-  NodeCardFooter,
   NodeCardHeader,
 } from "@flow-builder-ui/node-card";
 import DelayNodePropertyPanel from "../../sidebar/panels/node-properties/property-panels/delay-property-panel";
@@ -83,7 +82,6 @@ export function DelayNode({ id, isConnectable, selected, data }: DelayNodeProps)
         </div>
 
         <NodeCardDescription description="Pause the flow for a specified duration" />
-        <NodeCardFooter nodeId={id} />
       </NodeCardContent>
 
       <CustomHandle
