@@ -25,6 +25,11 @@ Check it out deployed on Vercel [here](https://shadcn-extended-workflows.vercel.
 - **Context Menus**:
   - Canvas context menu for quick node insertion
   - Node-specific context menus for actions and properties
+- **Keybinds**
+  - 'CTRL+A': Select all nodes
+  - 'DELETE': Delete selected nodes
+  - 'CTRL+C': Copy selected nodes
+  - 'CTRL+V': Paste selected nodes
 - **Enhanced Validation**:
   - Comprehensive flow validation
   - Real-time validation feedback
@@ -52,7 +57,7 @@ Make sure you have the following installed:
 
 1. **Clone the repository**:
    ```bash
-   git clone [your-repo-url]
+   git clone https://github.com/LeEricCH/shadcn-next-workflows
    ```
 
 2. **Install dependencies**:
