@@ -24,7 +24,7 @@ export function ValidationPanel() {
   );
 
   const { errors, nodes, showNodeProperties, setActivePanel } = useFlowStore(useShallow(selector));
-  const { setCenter, getNode } = useReactFlow();
+  const { setCenter, getNode, setNodes } = useReactFlow();
 
   // Keep a cache of node labels
   const nodeLabelCache = useRef<Record<string, string>>({});
@@ -72,13 +72,21 @@ export function ValidationPanel() {
     // Center the viewport on the node with some padding
     setCenter(node.position.x, node.position.y, { duration: 800, zoom: 1.2 });
 
+    // Select the node
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        selected: n.id === nodeId,
+      }))
+    );
+
     // Open the node properties panel
     showNodeProperties({
       id: node.id,
       type: node.type as BuilderNodeType,
     });
     setActivePanel(SidebarPanel.NODE_PROPERTIES);
-  }, [getNode, setCenter, showNodeProperties, setActivePanel]);
+  }, [getNode, setCenter, setNodes, showNodeProperties, setActivePanel]);
 
   const errorsByType = useMemo(() => {
     const grouped = errors.reduce((acc, error) => {

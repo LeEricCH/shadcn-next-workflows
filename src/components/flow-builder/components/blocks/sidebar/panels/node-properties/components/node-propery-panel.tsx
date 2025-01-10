@@ -11,17 +11,7 @@ interface NodePropertyPanelProps {
 }
 
 export function NodePropertyPanel({ id, type, data }: NodePropertyPanelProps) {
-  if (!(type in PROPERTY_PANELS)) {
-    return null;
-  }
-  
-  const PanelComponent = PROPERTY_PANELS[type as keyof typeof PROPERTY_PANELS];
-
   const { setNodes } = useReactFlow();
-
-  if (!PanelComponent) {
-    return null;
-  }
 
   const handleUpdateData = useCallback((newData: Partial<Node["data"]>) => {
     setNodes((nodes) =>
@@ -38,6 +28,16 @@ export function NodePropertyPanel({ id, type, data }: NodePropertyPanelProps) {
       )
     );
   }, [id, setNodes]);
+
+  if (!(type in PROPERTY_PANELS)) {
+    return null;
+  }
+  
+  const PanelComponent = PROPERTY_PANELS[type as keyof typeof PROPERTY_PANELS];
+
+  if (!PanelComponent || !data) {
+    return null;
+  }
 
   return (
     <div data-property-panel>
