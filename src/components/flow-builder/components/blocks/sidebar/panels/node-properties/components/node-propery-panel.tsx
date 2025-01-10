@@ -1,44 +1,52 @@
+import { type Node } from "@xyflow/react";
 import { useReactFlow } from "@xyflow/react";
-import { produce } from "immer";
+import { BuilderNodeType } from "@/components/flow-builder/components/blocks/types";
+import { PROPERTY_PANELS } from "../constants/property-panels";
 import { useCallback } from "react";
-import { BuilderNodeType } from "../../../../types";
-import { NODE_PROPERTY_PANEL_COMPONENTS } from "../constants/property-panels";
-import UnavailableNodePropertyPanel from "../property-panels/unavailable-property-panel";
 
-type NodePropertyPanelProps = Readonly<{
+interface NodePropertyPanelProps {
   id: string;
   type: BuilderNodeType;
   data: any;
-}>;
+}
 
 export function NodePropertyPanel({ id, type, data }: NodePropertyPanelProps) {
-  const PanelComponent = NODE_PROPERTY_PANEL_COMPONENTS[type];
+  if (!(type in PROPERTY_PANELS)) {
+    return null;
+  }
+  
+  const PanelComponent = PROPERTY_PANELS[type as keyof typeof PROPERTY_PANELS];
 
   const { setNodes } = useReactFlow();
 
-  const nodeData = produce(data, () => {});
+  if (!PanelComponent) {
+    return null;
+  }
 
-  const updateData = useCallback(
-    (newData: Partial<any>) => {
-      setNodes((nds) =>
-        produce(nds, (draft) => {
-          const node = draft.find((n) => n.id === id);
-          if (node) node.data = { ...node.data, ...newData };
-        })
-      );
-    },
+  const handleUpdateData = useCallback((newData: Partial<Node["data"]>) => {
+    setNodes((nodes) =>
+      nodes.map((node) =>
+        node.id === id
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                ...newData,
+              },
+            }
+          : node
+      )
+    );
+  }, [id, setNodes]);
 
-    [id, setNodes]
-  );
-
-  return PanelComponent && nodeData ? (
-    <PanelComponent
-      id={id}
-      type={type}
-      data={nodeData}
-      updateData={updateData}
-    />
-  ) : (
-    <UnavailableNodePropertyPanel />
+  return (
+    <div data-property-panel>
+      <PanelComponent
+        id={id}
+        type={type}
+        data={data}
+        updateData={handleUpdateData}
+      />
+    </div>
   );
 }

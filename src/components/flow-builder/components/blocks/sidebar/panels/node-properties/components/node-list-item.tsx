@@ -13,6 +13,7 @@ type NodeListItemProps = Readonly<
     id?: string;
     selected?: boolean;
     pseudoSelected?: boolean;
+    "data-node-id"?: string;
   }
 >;
 
@@ -23,6 +24,7 @@ export function NodeListItem({
   icon,
   selected,
   pseudoSelected,
+  "data-node-id": dataNodeId,
   ...props
 }: NodeListItemProps) {
   return (
@@ -31,9 +33,9 @@ export function NodeListItem({
       variant={selected ? "default" : "ghost"}
       className={cn(
         "h-8 select-none flex items-center justify-between gap-4 ",
-
         className
       )}
+      data-node-id={dataNodeId}
       {...props}
     >
       <HeaderWithIcon icon={icon} title={title} />

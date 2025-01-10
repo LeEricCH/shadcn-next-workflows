@@ -1,4 +1,5 @@
 import { BuilderNodeType } from "@/components/flow-builder/components/blocks/types";
+import { createNodeWithDefaultData } from "@/components/flow-builder/components/blocks/utils";
 import { nanoid } from "nanoid";
 import {
   addEdge,
@@ -9,16 +10,19 @@ import {
   EdgeChange,
   Node,
   NodeChange,
+  type XYPosition,
 } from "@xyflow/react";
 import { create } from "zustand";
 import { Tag } from "@/types/tag";
 import { produce } from "immer";
+import { SidebarPanel } from "@/components/flow-builder/components/blocks/sidebar/constants/panels";
 
 interface State {
   nodes: Node[];
   edges: Edge[];
+  nodePosition: XYPosition | null;
   sidebar: {
-    active: "node-properties" | "available-nodes" | "none";
+    active: SidebarPanel | "none";
     panels: {
       nodeProperties: {
         selectedNode: { id: string; type: BuilderNodeType } | null | undefined;
@@ -40,6 +44,7 @@ interface Actions {
       onNodesChange: (changes: NodeChange[]) => void;
       setNodes: (nodes: Node[]) => void;
       deleteNode: (node: Node) => void;
+      setNodePosition: (position: XYPosition | null) => void;
     };
     edges: {
       onEdgesChange: (changes: EdgeChange[]) => void;
@@ -48,9 +53,7 @@ interface Actions {
       deleteEdge: (edge: Edge) => void;
     };
     sidebar: {
-      setActivePanel: (
-        panel: "node-properties" | "available-nodes" | "none"
-      ) => void;
+      setActivePanel: (panel: SidebarPanel | "none") => void;
       showNodePropertiesOf: (node: {
         id: string;
         type: BuilderNodeType;
@@ -111,6 +114,7 @@ export const useFlowStore = create<IFlowState>()((set, get) => ({
     name: "",
     edges: [],
     nodes: [],
+    nodePosition: null,
     sidebar: {
       active: "none",
       panels: {
@@ -135,7 +139,7 @@ export const useFlowStore = create<IFlowState>()((set, get) => ({
       }));
     },
     sidebar: {
-      setActivePanel: (panel: "node-properties" | "available-nodes" | "none") =>
+      setActivePanel: (panel: SidebarPanel | "none") =>
         set((state) => ({
           workflow: {
             ...state.workflow,
@@ -143,22 +147,31 @@ export const useFlowStore = create<IFlowState>()((set, get) => ({
           },
         })),
       showNodePropertiesOf: (node: { id: string; type: BuilderNodeType }) => {
-        set((state) => ({
-          workflow: {
-            ...state.workflow,
-            sidebar: {
-              ...state.workflow.sidebar,
-              active: "node-properties",
-              panels: {
-                ...state.workflow.sidebar.panels,
-                nodeProperties: {
-                  ...state.workflow.sidebar.panels.nodeProperties,
-                  selectedNode: node,
+        set((state) => {
+          // Find the actual node with data from the workflow nodes
+          const actualNode = state.workflow.nodes.find(n => n.id === node.id);
+          
+          return {
+            workflow: {
+              ...state.workflow,
+              sidebar: {
+                ...state.workflow.sidebar,
+                active: SidebarPanel.NODE_PROPERTIES,
+                panels: {
+                  ...state.workflow.sidebar.panels,
+                  nodeProperties: {
+                    ...state.workflow.sidebar.panels.nodeProperties,
+                    selectedNode: actualNode ? {
+                      id: actualNode.id,
+                      type: actualNode.type as BuilderNodeType,
+                      data: actualNode.data
+                    } : null,
+                  },
                 },
               },
             },
-          },
-        }));
+          };
+        });
       },
       panels: {
         nodeProperties: {
@@ -202,23 +215,52 @@ export const useFlowStore = create<IFlowState>()((set, get) => ({
       onNodesChange: (changes) => {
         set((state) =>
           produce(state, (draft) => {
-            const updatedNodes = applyNodeChanges(
-              changes,
-              draft.workflow.nodes
-            );
-
-            draft.workflow.nodes = updatedNodes;
+            const updatedNodes = applyNodeChanges(changes, draft.workflow.nodes);
+            
+            draft.workflow.nodes = updatedNodes.map(updatedNode => {
+              const existingNode = draft.workflow.nodes.find(n => n.id === updatedNode.id);
+              
+              if (existingNode) {
+                return {
+                  ...existingNode,
+                  ...updatedNode,
+                  data: {
+                    ...existingNode.data,
+                    ...updatedNode.data
+                  }
+                };
+              }
+              return updatedNode;
+            });
           })
         );
       },
       setNodes: (nodes) => {
-        set({ workflow: { ...get().workflow, nodes } });
+        const nodesWithData = nodes.map(node => {
+          if (!node.data && node.type) {
+            const defaultNode = createNodeWithDefaultData(node.type as BuilderNodeType, node);
+            const resultNode = { ...node, data: defaultNode.data };
+            return resultNode;
+          }
+          return node;
+        });
+        set(produce((state) => {
+          state.workflow.nodes = nodesWithData;
+        }));
       },
       deleteNode: (node: Node) => {
         set((state) => ({
           workflow: {
             ...state.workflow,
             nodes: state.workflow.nodes.filter((n) => n.id !== node.id),
+          },
+        }));
+      },
+      setNodePosition: (position: XYPosition | null) => {
+        set((state) => ({
+          workflow: {
+            ...state.workflow,
+            nodePosition: position,
           },
         }));
       },

@@ -4,6 +4,7 @@ import { type DragEvent, type ReactNode, useCallback } from "react";
 import { BuilderNodeType } from "../../../../types";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
+import { SidebarPanel } from "../../../constants/panels";
 
 type NodePreviewDraggableProps = Readonly<{
   icon: string | ReactNode;
@@ -11,9 +12,7 @@ type NodePreviewDraggableProps = Readonly<{
   description: string;
   type: string;
   children?: never;
-  setActivePanel: (
-    panel: "node-properties" | "available-nodes" | "none"
-  ) => void;
+  setActivePanel: (panel: "none" | SidebarPanel) => void;
   insertNode: ReturnType<typeof useInsertNode>;
 }>;
 
@@ -27,7 +26,6 @@ export function NodePreviewDraggable({
 }: NodePreviewDraggableProps) {
   const onDragStart = useCallback(
     (e: DragEvent, type: string) => {
-  
       e.dataTransfer.setData(NODE_TYPE_DRAG_DATA_FORMAT, type);
       e.dataTransfer.effectAllowed = "move";
     },
@@ -35,10 +33,8 @@ export function NodePreviewDraggable({
   );
 
   const onClick = useCallback(() => {
-
     insertNode(type as BuilderNodeType);
-    setActivePanel("none");
-  }, [insertNode, setActivePanel, type]);
+  }, [insertNode, type]);
 
   return (
     <div

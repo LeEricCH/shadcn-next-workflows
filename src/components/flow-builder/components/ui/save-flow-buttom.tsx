@@ -4,16 +4,19 @@ import { useFlowStore } from "@/stores/flow-store";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { toast } from "sonner";
 import { useShallow } from "zustand/shallow";
+import { useState } from "react";
+import { WorkflowJsonModal } from "./workflow-json-modal";
 
 export const SaveFlowButton = () => {
-  const [saveWorkflow] = useFlowStore(
-    useShallow((s) => [s.actions.saveWorkflow])
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [workflow, saveWorkflow] = useFlowStore(
+    useShallow((s) => [s.workflow, s.actions.saveWorkflow])
   );
 
   const [isValidating, validateFlow] = useFlowValidator((isValid) => {
     if (isValid) {
-      const workflow = saveWorkflow();
-      console.log(workflow);
+      const savedWorkflow = saveWorkflow();
+      setIsModalOpen(true);
       toast.success("Flow is valid", {
         description: "You can now proceed to the next step",
         dismissible: true,
@@ -26,14 +29,22 @@ export const SaveFlowButton = () => {
   });
 
   return (
-    <Button
-      onClick={validateFlow}
-      disabled={isValidating}
-      variant={"outline"}
-      size={"sm"}
-      className=" flex gap-4"
-    >
-      <Icon icon="fluent:save-28-filled" /> Save Flow
-    </Button>
+    <>
+      <Button
+        onClick={validateFlow}
+        disabled={isValidating}
+        variant={"outline"}
+        size={"sm"}
+        className="flex gap-4"
+      >
+        <Icon icon="fluent:save-28-filled" /> Save Flow
+      </Button>
+
+      <WorkflowJsonModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        workflow={workflow}
+      />
+    </>
   );
 };

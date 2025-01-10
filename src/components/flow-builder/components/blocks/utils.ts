@@ -24,12 +24,26 @@ export function createNodeData<T extends BuilderNodeType>(
 
 export function createNodeWithDefaultData(
   type: BuilderNodeType,
-  data?: Partial<Node>
+  nodeData?: Partial<Node>
 ) {
-  const defaultData = NODES.find((node) => node.type === type)?.defaultData;
-  if (!defaultData)
+  const node = NODES.find((node) => node.type === type);
+  if (!node?.defaultData) {
     throw new Error(`No default data found for node type "${type}"`);
-  return Object.assign(createNodeData(type, defaultData), data) as Node;
+  }
+
+  // Create the base node structure
+  const newNode = {
+    id: nanoid(),
+    type,
+    position: nodeData?.position || { x: 0, y: 0 },
+    selected: nodeData?.selected || false,
+    data: nodeData?.data ? { ...node.defaultData, ...nodeData.data } : { ...node.defaultData },
+    deletable: nodeData?.deletable ?? true,
+    draggable: nodeData?.draggable ?? true,
+    connectable: nodeData?.connectable ?? true,
+  };
+
+  return newNode;
 }
 
 export function createNodeWithData<T>(

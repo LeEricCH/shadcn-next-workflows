@@ -3,10 +3,12 @@ import type { ComponentType } from "react";
 export enum BuilderNode {
   START = "start",
   END = "end",
-  TEXT_MESSAGE = "text-message",
-  CONDITIONAL_PATH = "conditional-path",
-  TAGS = "tags",
   MENU = "menu",
+  BRANCH = "branch",
+  TEXT_MESSAGE = "text-message",
+  TAGS = "tags",
+  DELAY = "delay",
+  LOOP = "loop",
 }
 
 export const HeaderGradientColors = {

@@ -1,6 +1,6 @@
 import { AVAILABLE_NODES } from "../blocks";
 import { useInsertNode } from "@/hooks/use-insert-node";
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BuilderNode, BuilderNodeType } from "../blocks/types";
 import { Icon } from "@iconify/react";
 import { useReactFlow, useViewport, Node } from "@xyflow/react";
@@ -8,6 +8,8 @@ import { useFlowStore } from "@/stores/flow-store";
 import { useShallow } from "zustand/shallow";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
+import { SidebarPanel } from "../blocks/sidebar/constants/panels";
 
 interface FlowContextMenuProps {
   children: React.ReactNode;
@@ -22,11 +24,13 @@ export function FlowContextMenu({ children }: FlowContextMenuProps) {
   const insertNode = useInsertNode();
   const { getNodes, getEdges, setNodes, setEdges } = useReactFlow();
   const viewport = useViewport();
-  const [deleteNode, deleteEdge, showNodeProperties] = useFlowStore(
+  const [deleteNode, deleteEdge, showNodeProperties, setActivePanel, setNodePosition] = useFlowStore(
     useShallow((s) => [
       s.actions.nodes.deleteNode, 
       s.actions.edges.deleteEdge,
-      s.actions.sidebar.showNodePropertiesOf
+      s.actions.sidebar.showNodePropertiesOf,
+      s.actions.sidebar.setActivePanel,
+      s.actions.nodes.setNodePosition
     ])
   );
   
@@ -35,25 +39,21 @@ export function FlowContextMenu({ children }: FlowContextMenuProps) {
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showNodeSubmenu, setShowNodeSubmenu] = useState(false);
-  const closeTimeoutRef = useRef<NodeJS.Timeout>();
 
-  const handleAddNode = useCallback(
-    (type: BuilderNodeType) => {
-      if (!menuPosition) return;
-      
-      const rect = document.querySelector('.react-flow')?.getBoundingClientRect();
-      if (rect) {
-        const position = {
-          x: (menuPosition.x - rect.left - viewport.x - 150) / viewport.zoom,
-          y: (menuPosition.y - rect.top - viewport.y) / viewport.zoom,
-        };
-        insertNode(type, position);
-        setIsMenuOpen(false);
-      }
-    },
-    [insertNode, viewport, menuPosition]
-  );
+  const handleAddNode = useCallback(() => {
+    if (!menuPosition) return;
+    
+    const rect = document.querySelector('.react-flow')?.getBoundingClientRect();
+    if (rect) {
+      const position = {
+        x: (menuPosition.x - rect.left - viewport.x) / viewport.zoom,
+        y: (menuPosition.y - rect.top - viewport.y) / viewport.zoom,
+      };
+      setNodePosition(position);
+      setActivePanel(SidebarPanel.AVAILABLE_NODES);
+      setIsMenuOpen(false);
+    }
+  }, [menuPosition, viewport, setNodePosition, setActivePanel]);
 
   const getSelectedNodes = useCallback(() => {
     return getNodes().filter(
@@ -199,86 +199,31 @@ export function FlowContextMenu({ children }: FlowContextMenuProps) {
     setIsMenuOpen(true);
   }, [getNodes, setNodes]);
 
+  const { handleKeyDown, ...keyboardHandlers } = useKeyboardShortcuts({
+    selectedNode,
+    copiedNode,
+    onCopy: handleCopyNode,
+    onPaste: handlePasteNode,
+    onDuplicate: handleDuplicateNode,
+    onDelete: handleDeleteSelected,
+    onSelectAll: handleSelectAll,
+  });
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const isContextMenu = target.closest('.flow-context-menu');
-      const isNodeSubmenu = target.closest('.node-submenu');
       
-      if (!isContextMenu && !isNodeSubmenu) {
+      if (!isContextMenu) {
         setIsMenuOpen(false);
-        setShowNodeSubmenu(false);
-      }
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsMenuOpen(false);
-      }
-
-      if (event.key === 'Delete') {
-        handleDeleteSelected();
-      }
-      
-      if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault();
-        if (getNodes().length > 2) {
-          handleSelectAll();
-        }
-      }
-
-      if (event.key === 'c' && (event.ctrlKey || event.metaKey) && selectedNode) {
-        event.preventDefault();
-        handleCopyNode();
-      }
-
-      if (event.key === 'd' && (event.ctrlKey || event.metaKey) && selectedNode) {
-        event.preventDefault();
-        handleDuplicateNode();
-      }
-
-      if (event.key === 'v' && (event.ctrlKey || event.metaKey) && copiedNode) {
-        event.preventDefault();
-        handlePasteNode();
       }
     };
 
     document.addEventListener('click', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-      if (closeTimeoutRef.current) {
-        clearTimeout(closeTimeoutRef.current);
-      }
     };
-  }, [handleDeleteSelected, handleSelectAll, handleCopyNode, handlePasteNode, handleDuplicateNode, selectedNode, copiedNode, getNodes]);
-
-  const handleAddNodeTriggerEnter = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-    }
-    setShowNodeSubmenu(true);
   }, []);
-
-  const handleAddNodeTriggerLeave = useCallback(() => {
-    closeTimeoutRef.current = setTimeout(() => {
-      setShowNodeSubmenu(false);
-    }, 100);
-  }, []);
-
-  const handleSubmenuEnter = useCallback(() => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-    }
-  }, []);
-
-  const handleSubmenuLeave = useCallback(() => {
-    setShowNodeSubmenu(false);
-  }, []);
-
-  const selectedCount = getSelectedNodes().length;
-  const canSelectAll = getNodes().length > 2;
 
   const handleShowNodeProperties = useCallback(() => {
     if (selectedNode) {
@@ -289,6 +234,9 @@ export function FlowContextMenu({ children }: FlowContextMenuProps) {
       setIsMenuOpen(false);
     }
   }, [selectedNode, showNodeProperties]);
+
+  const selectedCount = getSelectedNodes().length;
+  const canSelectAll = getNodes().length > 2;
 
   return (
     <>
@@ -311,44 +259,16 @@ export function FlowContextMenu({ children }: FlowContextMenuProps) {
         >
           {contextMenuType === 'canvas' ? (
             <div className="space-y-1">
-              <div className="relative">
-                <button
-                  className={cn(
-                    "relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-                    "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                  )}
-                  onMouseEnter={handleAddNodeTriggerEnter}
-                  onMouseLeave={handleAddNodeTriggerLeave}
-                >
-                  <Icon icon="mynaui:plus" className="mr-2 h-4 w-4" />
-                  Add Node
-                  <Icon icon="lucide:chevron-right" className="ml-auto h-4 w-4" />
-                </button>
-                {showNodeSubmenu && (
-                  <div 
-                    className={cn(
-                      "node-submenu absolute left-full top-0 ml-0.5 min-w-[180px] rounded-md border bg-popover p-1",
-                      "animate-in fade-in-0 zoom-in-95"
-                    )}
-                    onMouseEnter={handleSubmenuEnter}
-                    onMouseLeave={handleSubmenuLeave}
-                  >
-                    {AVAILABLE_NODES.map((node) => (
-                      <button
-                        key={node.type}
-                        className={cn(
-                          "relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
-                          "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        )}
-                        onClick={() => handleAddNode(node.type as BuilderNodeType)}
-                      >
-                        <Icon icon={node.icon} className="mr-2 h-4 w-4" />
-                        {node.title}
-                      </button>
-                    ))}
-                  </div>
+              <button
+                className={cn(
+                  "relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
+                  "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                 )}
-              </div>
+                onClick={handleAddNode}
+              >
+                <Icon icon="mynaui:plus" className="mr-2 h-4 w-4" />
+                Add Node
+              </button>
               <div className="h-px my-1 bg-border" />
               <button
                 className={cn(
