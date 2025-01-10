@@ -10,7 +10,6 @@ import {
   NodeCard,
   NodeCardContent,
   NodeCardDescription,
-  NodeCardFooter,
   NodeCardHeader,
 } from "@flow-builder-ui/node-card";
 import BranchNodePropertyPanel from "../../sidebar/panels/node-properties/property-panels/branch-property-panel";
@@ -163,7 +162,6 @@ export function BranchNode({ id, isConnectable, selected, data }: BranchNodeProp
         </div>
 
         <NodeCardDescription description="Branch the flow based on a condition with advanced comparison options" />
-        <NodeCardFooter nodeId={id} />
       </NodeCardContent>
 
       <CustomHandle

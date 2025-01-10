@@ -10,7 +10,6 @@ import {
   NodeCard,
   NodeCardContent,
   NodeCardDescription,
-  NodeCardFooter,
   NodeCardHeader,
 } from "@flow-builder-ui/node-card";
 import LoopNodePropertyPanel from "../../sidebar/panels/node-properties/property-panels/loop-property-panel";
@@ -149,7 +148,6 @@ export function LoopNode({ id, isConnectable, selected, data }: LoopNodeProps) {
         </div>
 
         <NodeCardDescription description="Repeat a section of the flow based on a condition or count" />
-        <NodeCardFooter nodeId={id} />
       </NodeCardContent>
 
       <CustomHandle

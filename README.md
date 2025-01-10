@@ -1,6 +1,6 @@
-# Workflow Example with React Flows, Next.js & Shadcn
+# Enhanced Workflow Builder with React Flows, Next.js & Shadcn
 
-This is a sample project that demonstrates how to build and visualize interactive workflows using React Flows, Next.js, and Shadcnui. The project includes validation for incomplete flows and provides modular components for easy future node creation.
+This project is a fork and expansion of [nobruf/shadcn-next-workflows](https://github.com/nobruf/shadcn-next-workflows), enhanced with additional features and improvements. It demonstrates how to build and visualize interactive workflows using React Flows, Next.js, and Shadcnui, with expanded functionality for a more robust workflow building experience.
 
 ## Screenshots
 
@@ -8,16 +8,30 @@ This is a sample project that demonstrates how to build and visualize interactiv
 
 ## ✨ Features
 
-- **Predefined Nodes**:
-  - `Start`: The starting point of the workflow.
-  - `Menu`: A node for selecting options.
-  - `Text Message`: Displays a text message.
-  - `Tags`: Node to assign specific tags.
-  - `End`: The endpoint of the workflow.
+### Original Features
+- **Predefined Base Nodes**:
+  - `Start`: The starting point of the workflow
+  - `Menu`: A node for selecting options
+  - `Text Message`: Displays a text message
+  - `Tags`: Node to assign specific tags
+  - `End`: The endpoint of the workflow
 
-- **Flow Validation**: The system automatically checks if all nodes are properly connected. Incomplete workflows cannot be completed.
-
-- **Modular Components**: Easy-to-use components to add new nodes in the future, ensuring scalability.
+### New & Enhanced Features
+- **Context Menus**:
+  - Canvas context menu for quick node insertion
+  - Node-specific context menus for actions and properties
+- **Enhanced Validation**:
+  - Comprehensive flow validation
+  - Real-time validation feedback
+  - Visual indicators for validation errors
+- **Additional Nodes**:
+  - `Delay`: Add time delays in workflows
+  - `Branch`: Create conditional branches
+  - `Loop`: Implement repeating sequences
+- **Improved UI/UX**:
+  - Modern sidebar interface
+  - Drag-and-drop node creation
+  - Interactive node properties panel
 
 ## 🚀 Getting Started
 
@@ -26,45 +40,46 @@ Follow these steps to run the project locally.
 ### Prerequisites
 
 Make sure you have the following installed:
-
 - Node.js (v14.x or higher)
 - npm (v6.x or higher)
 
 ### Installation
 
-- **Clone the repository**:
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/nobruf/shadcn-next-workflows.git``
+   git clone [your-repo-url]
+   ```
 
-- **Install dependencies**:
-   ```bash 
+2. **Install dependencies**:
+   ```bash
    npm install
-- **Run the development server**:
-   ```bash 
-   npm run dev
-Open http://localhost:3000 in your browser to view the application.
+   ```
 
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+Open http://localhost:3000 in your browser to view the application.
 
 ## 🛠️ How to Use
 
-- **Creating Workflows**: Start by adding nodes (`Start`, `Menu`, `Text Message`, `Tags`, `End`) to the canvas.
-- **Connecting Nodes**: Drag and drop connections between the nodes to build your flow.
-- **Validation**: Ensure all nodes are connected properly. The system will prevent incomplete flows from being finished.
+- **Creating Workflows**: Add nodes through the sidebar or context menu
+- **Connecting Nodes**: Drag connections between nodes to build your flow
+- **Node Configuration**: Use the properties panel to configure each node
+- **Validation**: Real-time validation ensures proper flow construction
 
-## 🔮 Future Enhancements
+## 🔮 Upcoming Features
 
-- Easy node creation using modular components.
-- Custom nodes can be added by following the component structure provided.
+- Additional specialized node types
+- Advanced flow control mechanisms
+- Enhanced validation rules
+- Improved visual feedback
+- Export/Import capabilities
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to fork the repository and submit pull requests.
-
-- Fork the Project.
-- Create your Feature Branch (`git checkout -b feature/AmazingFeature`).
-- Commit your Changes (`git commit -m 'Add some AmazingFeature'`).
-- Push to the Branch (`git push origin feature/AmazingFeature`).
-- Open a Pull Request.
+Contributions are welcome! Feel free to submit issues and pull requests.
 
 ## 📝 License
 
