@@ -36,6 +36,7 @@ import { FlowContextMenu } from "./components/context-menu/flow-context-menu";
 import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 import { toast } from "sonner";
 import { useInsertNode } from "@/hooks/use-insert-node";
+import { ValidationError } from "@/stores/flow-store";
 
 const edgeTypes: EdgeTypes = {
   deletable: CustomDeletableEdge,
@@ -61,7 +62,7 @@ export const FlowBuilder = () => {
     onEdgesChange,
     onConnect,
     deleteNode,
-    deleteEdge
+    deleteEdge,
   ] = useFlowStore(
     useShallow((s) => [
       s.workflow.name,
