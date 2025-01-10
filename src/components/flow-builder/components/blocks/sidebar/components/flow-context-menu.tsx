@@ -12,7 +12,7 @@ interface FlowContextMenuProps {
 }
 
 export default function FlowContextMenu({ position, onClose }: FlowContextMenuProps) {
-  const { project } = useReactFlow();
+  const { screenToFlowPosition } = useReactFlow();
   const [setActivePanel, setNodePosition] = useFlowStore(
     useShallow((s) => [
       s.actions.sidebar.setActivePanel,
@@ -22,7 +22,7 @@ export default function FlowContextMenu({ position, onClose }: FlowContextMenuPr
 
   const handleOpenSidebar = useCallback(() => {
     // Convert screen coordinates to flow coordinates
-    const flowPosition = project({ x: position.x, y: position.y });
+    const flowPosition = screenToFlowPosition({ x: position.x, y: position.y });
     
     // Store the position where we want to add the node
     setNodePosition(flowPosition);
@@ -32,7 +32,7 @@ export default function FlowContextMenu({ position, onClose }: FlowContextMenuPr
     
     // Close the context menu
     onClose();
-  }, [position, project, setActivePanel, setNodePosition, onClose]);
+  }, [position, screenToFlowPosition, setActivePanel, setNodePosition, onClose]);
 
   return (
     <div

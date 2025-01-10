@@ -1,3 +1,5 @@
+"use client";
+
 import { useFlowStore, type IFlowState, type ValidationError } from "@/stores/flow-store";
 import { useShallow } from "zustand/shallow";
 import { Icon } from "@iconify/react/dist/iconify.js";

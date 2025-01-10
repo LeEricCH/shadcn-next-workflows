@@ -135,11 +135,8 @@ interface NodeCardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const NodeCardFooter = React.forwardRef<HTMLDivElement, NodeCardFooterProps>(
   ({ className, nodeId, ...props }, ref) => {
-    const errors = useFlowStore(
-      useShallow((s) => 
-        s.workflow.validation.errors.filter((e) => e.nodeId === nodeId.toString())
-      ),
-      (a, b) => a.length === b.length && a.every((e, i) => e.message === b[i].message)
+    const errors = useFlowStore((s) => 
+      s.workflow.validation.errors.filter((e) => e.nodeId === nodeId.toString())
     );
 
     const hasErrors = errors.length > 0;

@@ -241,8 +241,14 @@ export const getWorkflows = async (): Promise<IFlowState["workflow"][]> => {
           },
         },
       ],
+      nodePosition: null,
+      validation: {
+        errors: [],
+        isValid: true,
+        lastValidated: null
+      },
       sidebar: {
-        active: "available-nodes",
+        active: "none",
         panels: {
           nodeProperties: {
             selectedNode: null,

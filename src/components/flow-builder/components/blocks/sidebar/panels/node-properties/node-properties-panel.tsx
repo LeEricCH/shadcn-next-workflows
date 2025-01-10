@@ -1,3 +1,5 @@
+"use client";
+
 import { useFlowStore } from "@/stores/flow-store";
 import { useNodes, useReactFlow } from "@xyflow/react";
 import { produce } from "immer";

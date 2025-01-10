@@ -1,3 +1,5 @@
+"use client";
+
 import { BuilderNodeType, BuilderNode } from "@/components/flow-builder/components/blocks/types";
 import { AVAILABLE_NODES } from "@/components/flow-builder/components/blocks";
 import { useInsertNode } from "@/hooks/use-insert-node";
