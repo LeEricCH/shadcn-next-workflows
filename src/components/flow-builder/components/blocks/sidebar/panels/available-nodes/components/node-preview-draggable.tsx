@@ -38,28 +38,25 @@ export function NodePreviewDraggable({
 
   return (
     <div
-      className={"flex cursor-grab select-none gap-2 border border-card-foreground/10 rounded-xl bg-card p-2.5 shadow-sm transition hover:ring-2 hover:ring-primary/50"}
+      className="group w-full flex items-start gap-3 rounded-lg border border-card-foreground/5 bg-card/30 p-3 cursor-grab select-none transition-all hover:bg-primary/5 hover:border-primary/20 active:cursor-grabbing"
       onClick={onClick}
       onDragStart={(e) => onDragStart(e, type)}
       draggable
       data-vaul-no-drag
     >
-      <div className="shrink-0">
-        <div className="size-10 flex items-center justify-center border border-card-foreground/10 rounded-xl bg-card">
-          {typeof icon === "string" ? (
-            <Icon icon={icon} className="size-6 text-card-foreground/80" />
-          ) : (
-            icon
-          )}
-        </div>
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-primary/10 to-primary/5">
+        {typeof icon === "string" ? (
+          <Icon icon={icon} className="h-4 w-4 text-primary" />
+        ) : (
+          icon
+        )}
       </div>
 
-      <div className="ml-1 flex grow flex-col">
-        <div className="mt-px text-sm font-medium leading-normal">{title}</div>
-
-        <div className="line-clamp-3 mt-1 text-xs text-card-foreground/60 leading-normal">
+      <div className="flex-1 min-w-0">
+        <h4 className="text-sm font-medium">{title}</h4>
+        <p className="text-xs text-card-foreground/60 line-clamp-2 mt-0.5">
           {description}
-        </div>
+        </p>
       </div>
     </div>
   );
