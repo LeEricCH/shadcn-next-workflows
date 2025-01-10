@@ -26,10 +26,10 @@ Check it out deployed on Vercel [here](https://shadcn-extended-workflows.vercel.
   - Canvas context menu for quick node insertion
   - Node-specific context menus for actions and properties
 - **Keybinds**
-  - 'CTRL+A': Select all nodes
-  - 'DELETE': Delete selected nodes
-  - 'CTRL+C': Copy selected nodes
-  - 'CTRL+V': Paste selected nodes
+  - `CTRL+A`: Select all nodes
+  - `DELETE`: Delete selected nodes
+  - `CTRL+C`: Copy selected nodes
+  - `CTRL+V`: Paste selected nodes
 - **Enhanced Validation**:
   - Comprehensive flow validation
   - Real-time validation feedback
