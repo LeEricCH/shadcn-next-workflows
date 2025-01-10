@@ -1,3 +1,4 @@
+import { SidebarPanel } from "@/components/flow-builder/components/blocks/sidebar/constants/panels";
 import type { IFlowState } from "@/stores/flow-store";
 
 export const getWorkflows = async (): Promise<IFlowState["workflow"][]> => {
@@ -248,7 +249,7 @@ export const getWorkflows = async (): Promise<IFlowState["workflow"][]> => {
         lastValidated: null
       },
       sidebar: {
-        active: "none",
+        activePanel: SidebarPanel.AVAILABLE_NODES as SidebarPanel | "none",
         panels: {
           nodeProperties: {
             selectedNode: null,
