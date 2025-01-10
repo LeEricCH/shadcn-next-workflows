@@ -1,7 +1,7 @@
 import { useFlowStore } from "@/stores/flow-store";
 import { useNodes, useReactFlow } from "@xyflow/react";
 import { produce } from "immer";
-import { useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useEffect, useCallback } from "react";
 import { useNodeList } from "./hooks/use-node-list";
 import SidebarPanelWrapper from "../../components/sidebar-panel-wrapper";
 import { BuilderNode } from "../../../types";
@@ -21,9 +21,7 @@ export function NodePropertiesPanel() {
   );
 
   const nodes = useNodes();
-
   const nodeList = useNodeList(nodes);
-
   const { setNodes } = useReactFlow();
 
   // Add ref for the list container
@@ -39,20 +37,32 @@ export function NodePropertiesPanel() {
     }
   }, [selectedNode]);
 
-  const onNodeClick = (id: string) => {
+  const onNodeClick = useCallback((id: string, event: React.MouseEvent) => {
     setNodes((nds) =>
       produce(nds, (draft) => {
-        draft.forEach((node) => {
-          node.selected = node.id === id;
-        });
+        // If Ctrl key is pressed, toggle selection of clicked node
+        if (event.ctrlKey) {
+          const node = draft.find(n => n.id === id);
+          if (node) {
+            node.selected = !node.selected;
+          }
+        } else {
+          // If Ctrl is not pressed, select only the clicked node
+          draft.forEach((node) => {
+            node.selected = node.id === id;
+          });
+        }
       })
     );
 
-    setSelectedNode({
-      id,
-      type: nodeList.find((n) => n.id === id)?.type as BuilderNode,
-    });
-  };
+    // Only update the property panel selection if Ctrl is not pressed
+    if (!event.ctrlKey) {
+      setSelectedNode({
+        id,
+        type: nodeList.find((n) => n.id === id)?.type as BuilderNode,
+      });
+    }
+  }, [nodeList, setNodes, setSelectedNode]);
 
   const selectedNodeData = useMemo(() => {
     return nodes.find((n) => n.id === selectedNode?.id)?.data;
@@ -79,8 +89,8 @@ export function NodePropertiesPanel() {
               icon={node.detail.icon}
               selected={selectedNode?.id === node.id}
               pseudoSelected={node.selected}
-              onClick={() => {
-                onNodeClick(node.id);
+              onClick={(e: React.MouseEvent) => {
+                onNodeClick(node.id, e);
               }}
             />
           ))}
