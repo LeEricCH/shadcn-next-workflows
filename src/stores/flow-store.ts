@@ -47,7 +47,7 @@ interface State {
     lastValidated: number | null;
   };
   sidebar: {
-    active: SidebarPanel | "none";
+    activePanel: SidebarPanel | "none";
     panels: {
       nodeProperties: {
         selectedNode: { id: string; type: BuilderNodeType } | null | undefined;
@@ -238,7 +238,7 @@ export const useFlowStore = create<IFlowState>()(
           lastValidated: null,
         },
         sidebar: {
-          active: "none",
+          activePanel: "none",
           panels: {
             nodeProperties: {
               selectedNode: null,
@@ -405,7 +405,7 @@ export const useFlowStore = create<IFlowState>()(
             set((state) => ({
               workflow: {
                 ...state.workflow,
-                sidebar: { ...state.workflow.sidebar, active: panel },
+                sidebar: { ...state.workflow.sidebar, activePanel: panel },
               },
             })),
           showNodePropertiesOf: (node: { id: string; type: BuilderNodeType }) => {
@@ -418,7 +418,7 @@ export const useFlowStore = create<IFlowState>()(
                   ...state.workflow,
                   sidebar: {
                     ...state.workflow.sidebar,
-                    active: SidebarPanel.NODE_PROPERTIES,
+                    activePanel: SidebarPanel.NODE_PROPERTIES,
                     panels: {
                       ...state.workflow.sidebar.panels,
                       nodeProperties: {

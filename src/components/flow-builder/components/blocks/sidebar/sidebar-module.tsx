@@ -4,7 +4,7 @@ import { DesktopSidebarFragment } from "./fragments/desktop-sidebar-fragment";
 
 export function SidebarModule() {
   const [activePanel, setActivePanel] = useFlowStore(
-    useShallow((s) => [s.workflow.sidebar.active, s.actions.sidebar.setActivePanel])
+    useShallow((s) => [s.workflow.sidebar.activePanel, s.actions.sidebar.setActivePanel])
   );
 
   return (

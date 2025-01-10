@@ -1,3 +1,6 @@
+import { SidebarPanel } from "@/components/flow-builder/components/blocks/sidebar/constants/panels";
+import { BuilderNodeType } from "@/components/flow-builder/components/blocks/types";
+
 export const getWorkflow = async (id: string) => {
   return {
     "id": "1",
@@ -267,12 +270,12 @@ export const getWorkflow = async (id: string) => {
       "lastValidated": 1736542471914
     },
     "sidebar": {
-      "active": "none",
+      "activePanel": SidebarPanel.AVAILABLE_NODES as SidebarPanel | "none",
       "panels": {
         "nodeProperties": {
           "selectedNode": {
             "id": "liV7jHZC83ocWkJNbTRv4",
-            "type": "branch",
+            "type": "branch" as BuilderNodeType,
             "data": {
               "variable": "",
               "valueType": "string",
